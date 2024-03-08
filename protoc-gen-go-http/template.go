@@ -16,6 +16,7 @@ type serviceDesc struct {
 	Metadata    string // api/helloworld/helloworld.proto
 	Methods     []*methodDesc
 	MethodSets  map[string]*methodDesc
+	Token       bool
 }
 
 type methodDesc struct {
@@ -33,6 +34,8 @@ type methodDesc struct {
 	HasBody      bool
 	Body         string
 	ResponseBody string
+	// openim
+	Token bool
 }
 
 func (s *serviceDesc) execute() string {

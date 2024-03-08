@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	openim "github.com/honlyc/openim-cmdline/protoc-gen-go-http/options"
 	"google.golang.org/genproto/googleapis/api/annotations"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
@@ -73,6 +74,12 @@ func genService(_ *protogen.Plugin, file *protogen.File, g *protogen.GeneratedFi
 		ServiceName: string(service.Desc.FullName()),
 		Metadata:    file.Desc.Path(),
 	}
+
+	openimServerOptions, ook := proto.GetExtension(service.Desc.Options(), openim.E_Server).(*openim.AutoServerOptions)
+	if openimServerOptions != nil && ook {
+		sd.Token = openimServerOptions.GetToken()
+	}
+
 	for _, method := range service.Methods {
 		if method.Desc.IsStreamingClient() || method.Desc.IsStreamingServer() {
 			continue
@@ -151,6 +158,11 @@ func buildHTTPRule(g *protogen.GeneratedFile, service *protogen.Service, m *prot
 		md.ResponseBody = ""
 	} else if responseBody != "" {
 		md.ResponseBody = "." + camelCaseVars(responseBody)
+	}
+
+	openimOptions, ook := proto.GetExtension(m.Desc.Options(), openim.E_Method).(*openim.MethodOptions)
+	if openimOptions != nil && ook {
+		md.Token = openimOptions.GetToken()
 	}
 	return md
 }

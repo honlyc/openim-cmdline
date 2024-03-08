@@ -14,10 +14,10 @@ type {{.ServiceType}}HTTPServer interface {
 {{- end}}
 }
 
-func Register{{.ServiceType}}HTTPServer(s *gin.Engine, srv {{.ServiceType}}HTTPServer) {
-	r := s.Group("/")
+func Register{{.ServiceType}}HTTPServer(s *gin.Engine, handleFunc gin.HandlerFunc, srv {{.ServiceType}}HTTPServer) {
+	r := s.Group("/"{{- if .Token }}, handleFunc{{- end }})
 	{{- range .Methods}}
-	r.{{.Method}}("{{.Path}}", _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv))
+	r.{{.Method}}("{{.Path}}",{{- if .Token }}handleFunc, {{- end}} _{{$svrType}}_{{.Name}}{{.Num}}_HTTP_Handler(srv))
 	{{- end}}
 }
 

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package openim;
+
+option go_package = "protoc-gen-go-http/options;openim";
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.MethodOptions {
+  MethodOptions method = 521191;
+}
+
+message MethodOptions {
+  bool token = 1;
+}
+
+extend google.protobuf.ServiceOptions {
+  AutoServerOptions server = 521191;
+}
+
+message AutoServerOptions {
+  bool token = 1;
+}
