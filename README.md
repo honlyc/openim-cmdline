@@ -99,3 +99,21 @@ ParseToken := GinParseToken(config)
 authApi := NewAuthApi(*authRpc)
 auth.RegisterAuthHTTPServer(r, ParseToken, &authApi)
 ```
+
+# Optimization for OpenIMServer
+
+```go
+a := NewAuthApi(*authRpc)
+
+// Before ⬇️
+authRouterGroup := r.Group("/auth")
+{
+	authRouterGroup.POST("/user_token", a.UserToken)
+	authRouterGroup.POST("/get_user_token", ParseToken, a.GetUserToken)
+	authRouterGroup.POST("/parse_token", a.ParseToken)
+	authRouterGroup.POST("/force_logout", ParseToken, a.ForceLogout)
+}
+
+// After ⬇️
+auth.RegisterAuthHTTPServer(r, ParseToken, &a)
+``` 
